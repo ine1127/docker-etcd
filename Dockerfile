@@ -1,11 +1,11 @@
 FROM docker.io/alpine:latest
-MAINTAINER Tatsuhiro Nakamura <tatsu@dcc.co.jp>
+MAINTAINER ine1127
 
-ENV PROXY=http://p-dcc.dcc.co.jp:911 \
+ENV PROXY="" \
     HTTP_PROXY="" \
     HTTPS_PROXY="" \
     FTP_PROXY="" \
-    NO_PROXY=".dcc.co.jp,localhost,127.0.0.1,210.254.96.0"
+    NO_PROXY=""
 
 ENV http_proxy=${HTTP_PROXY:-${PROXY}} \
     HTTP_PROXY=${HTTP_PROXY:-${PROXY}} \
