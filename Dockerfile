@@ -30,19 +30,17 @@ ENV SERVICE_UID="800" \
     SERVICE_HOME_DIR="/var/lib/${SERVICE_NAME}" \
     SERVICE_USER_COMMENT="exec_etcd" \
     SERVICE_LOGIN_SHELL="/sbin/nologin"
-
-ENV SERVICE_CONF_DIR="/etc/${SERVICE_NAME}" \
+    SERVICE_CONF_DIR="/etc/${SERVICE_NAME}" \
     SERVICE_RELEASES="${SERVICE_NAME}-v${SERVICE_VERSION}-${SERVICE_ARCH}"
-ENV SERVICE_URL="https://github.com/coreos/etcd/releases/download/v${SERVICE_VERSION}/${SERVICE_RELEASES}.tar.gz"
 
-WORKDIR /root
+ENV SERVICE_URL="https://github.com/coreos/etcd/releases/download/v${SERVICE_VERSION}/${SERVICE_RELEASES}.tar.gz"
 
 RUN mkdir ${SERVICE_CONF_DIR} && \
     mkdir ${SERVICE_DIR} && \
     apk update && \
     apk add curl && \
-    curl -x ${PROXY} -jksSLO ${SERVICE_URL} && \
-    tar zxvf ${SERVICE_RELEASES}.tar.gz && \
+    curl -x ${PROXY} -jksSL ${SERVICE_URL} -o /tmp/${SERVICE_RELEASES}.tar.gz && \
+    tar zxvf ${SERVICE_RELEASES}.tar.gz -C /tmp && \
     addgroup -g ${SERVICE_GID} -S ${SERVICE_GROUP} && \
     adduser -D \
             -u ${SERVICE_UID} \
@@ -51,8 +49,8 @@ RUN mkdir ${SERVICE_CONF_DIR} && \
             -s ${SERVICE_LOGIN_SHELL} \
             -G ${SERVICE_GROUP} \
             -S ${SERVICE_USER} && \
-    mv ${SERVICE_RELEASES}/etcd ${SERVICE_DIR}/etcd && \
-    mv ${SERVICE_RELEASES}/etcdctl ${SERVICE_DIR}/etcdctl
+    mv /tmp/${SERVICE_RELEASES}/etcd ${SERVICE_DIR}/etcd && \
+    mv /tmp/${SERVICE_RELEASES}/etcdctl ${SERVICE_DIR}/etcdctl
 
 VOLUME ["${SERVICE_HOME_DIR}", "${SERVICE_CONF_DIR}"]
 EXPOSE 2379 2380 
